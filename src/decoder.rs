@@ -1,5 +1,10 @@
-use std::collections::BTreeMap;
+use alloc::{boxed::Box, collections::BTreeMap, vec::Vec};
+
+#[cfg(feature = "std")]
 use std::io::{Cursor, Read, Seek, SeekFrom};
+#[cfg(not(feature = "std"))]
+use core2::io::{Cursor, Read, Seek, SeekFrom};
+
 use {CborError, CborType};
 
 // We limit the length of any cbor byte array to 128MiB. This is a somewhat

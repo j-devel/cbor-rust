@@ -1,4 +1,5 @@
-use std::collections::BTreeMap;
+use alloc::vec::Vec;
+use alloc::collections::BTreeMap;
 use CborType;
 
 /// Given a vector of bytes to append to, a tag to use, and an unsigned value to encode, uses the

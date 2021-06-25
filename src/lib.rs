@@ -1,3 +1,12 @@
+#![no_std]
+
+#[macro_use]
+extern crate alloc;
+
+use alloc::{boxed::Box, string::String, vec::Vec};
+
+extern crate core2;
+
 pub mod decoder;
 pub mod serializer;
 #[cfg(test)]
@@ -5,8 +14,8 @@ mod test_decoder;
 #[cfg(test)]
 mod test_serializer;
 
-use std::cmp::Ordering;
-use std::collections::BTreeMap;
+use core::cmp::Ordering;
+use alloc::collections::BTreeMap;
 
 #[derive(Debug, Clone, PartialEq, PartialOrd, Eq)]
 pub enum CborType {
