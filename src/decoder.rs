@@ -10,10 +10,17 @@ use {CborError, CborType};
 // We limit the length of any cbor byte array to 128MiB. This is a somewhat
 // arbitrary limit that should work on all platforms and is large enough for
 // any benign data.
+#[cfg(feature = "std")]
 pub const MAX_ARRAY_SIZE: usize = 134_217_728;
+#[cfg(not(feature = "std"))]
+// pub const MAX_ARRAY_SIZE: usize = 131_072; // 128KiB; gets `alloc_error_handler()`
+pub const MAX_ARRAY_SIZE: usize = 32768; // 32KiB; custom
 
 // Prevent stack exhaustion by limiting the nested depth of CBOR data.
+#[cfg(feature = "std")]
 const MAX_NESTED_DEPTH: usize = 256;
+#[cfg(not(feature = "std"))]
+const MAX_NESTED_DEPTH: usize = 64;
 
 /// Struct holding a cursor and additional information for decoding.
 #[derive(Debug)]
