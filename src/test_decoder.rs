@@ -1,5 +1,5 @@
 use decoder::{decode, MAX_ARRAY_SIZE};
-use std::{collections::BTreeMap, boxed::Box, vec::Vec, vec};
+use std::{collections::BTreeMap, boxed::Box, vec::Vec};
 use {CborError, CborType};
 
 // First test all the basic types
