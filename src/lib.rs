@@ -1,10 +1,12 @@
 #![no_std]
 
+#[cfg(not(feature = "std"))]
 #[macro_use]
 extern crate alloc;
 
-use alloc::{boxed::Box, string::String, vec::Vec};
-
+#[cfg(feature = "std")]
+extern crate std;
+#[cfg(not(feature = "std"))]
 extern crate core2;
 
 pub mod decoder;
@@ -15,7 +17,11 @@ mod test_decoder;
 mod test_serializer;
 
 use core::cmp::Ordering;
-use alloc::collections::BTreeMap;
+
+#[cfg(feature = "std")]
+use std::{collections::BTreeMap, boxed::Box, string::String, vec::Vec};
+#[cfg(not(feature = "std"))]
+use alloc::{collections::BTreeMap, boxed::Box, string::String, vec::Vec};
 
 #[derive(Debug, Clone, PartialEq, PartialOrd, Eq)]
 pub enum CborType {

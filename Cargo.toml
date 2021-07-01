@@ -12,4 +12,4 @@ default = ["std"]
 std = []
 
 [dependencies]
-core2 = { git = "https://github.com/AnimaGUS-minerva/core2", branch = "0.3.0-alpha.1-compat", default-features = false, features=["compat"] }
+core2 = { git = "https://github.com/AnimaGUS-minerva/core2", branch = "0.3.0-alpha.1-compat", default-features = false, features=["compat"], optional = true }

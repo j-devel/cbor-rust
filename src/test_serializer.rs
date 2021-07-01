@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, boxed::Box, string::{String, ToString}, vec::Vec, vec};
 use CborType;
 
 #[test]

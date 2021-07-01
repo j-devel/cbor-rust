@@ -1,5 +1,8 @@
-use alloc::vec::Vec;
-use alloc::collections::BTreeMap;
+#[cfg(feature = "std")]
+use std::{collections::BTreeMap, vec::Vec};
+#[cfg(not(feature = "std"))]
+use alloc::{collections::BTreeMap, vec::Vec};
+
 use CborType;
 
 /// Given a vector of bytes to append to, a tag to use, and an unsigned value to encode, uses the

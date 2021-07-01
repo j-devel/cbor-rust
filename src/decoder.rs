@@ -1,3 +1,6 @@
+#[cfg(feature = "std")]
+use std::{boxed::Box, collections::BTreeMap, vec::Vec, vec};
+#[cfg(not(feature = "std"))]
 use alloc::{boxed::Box, collections::BTreeMap, vec::Vec};
 
 #[cfg(feature = "std")]
