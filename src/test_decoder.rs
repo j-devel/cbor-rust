@@ -1,5 +1,10 @@
 use decoder::{decode, MAX_ARRAY_SIZE};
-use std::{collections::BTreeMap, boxed::Box, vec::Vec};
+
+#[cfg(feature = "std")]
+use std::{boxed::Box, collections::BTreeMap, vec::Vec};
+#[cfg(not(feature = "std"))]
+use ::alloc::{boxed::Box, collections::BTreeMap, vec::Vec};
+
 use {CborError, CborType};
 
 // First test all the basic types
@@ -65,7 +70,7 @@ fn test_integer_objects() {
     test_integer_all(bytes, 18446744073709551615);
 }
 
-#[cfg(test)]
+// #[cfg(test)]
 fn test_tag(bytes: Vec<u8>, expected_tag: u64, expected_value: CborType) {
     let decoded = decode(&bytes).unwrap();
     match decoded {
@@ -370,17 +375,21 @@ fn test_major_type_7() {
 
 #[test]
 fn test_large_input() {
-    let array = vec![0xFF; MAX_ARRAY_SIZE];
+    let len = MAX_ARRAY_SIZE;
+    let array = vec![0xFF; len];
     let expected = CborType::Bytes(array.clone());
-    let mut bytes = vec![0x5A, 0x08, 0x00, 0x00, 0x00];
+    let mut bytes = vec![0x5A];
+    bytes.extend_from_slice(&(len as u32).to_be_bytes());
     bytes.extend_from_slice(&array);
     test_decoder(bytes, expected);
 }
 
 #[test]
 fn test_too_large_input() {
-    let array = vec![0xFF; MAX_ARRAY_SIZE + 1];
-    let mut bytes = vec![0x5A, 0x08, 0x00, 0x00, 0x01];
+    let len = MAX_ARRAY_SIZE + 1;
+    let array = vec![0xFF; len];
+    let mut bytes = vec![0x5A];
+    bytes.extend_from_slice(&(len as u32).to_be_bytes());
     bytes.extend_from_slice(&array);
     test_decoder_error(bytes, CborError::InputTooLarge);
 }
@@ -392,12 +401,18 @@ fn test_invalid_input() {
     test_decoder_error(bytes, CborError::UnsupportedType);
 }
 
+// @@ Adjust `MAX_ITER_TEST_STACK` w.r.t. `MAX_NESTED_DEPTH` and the stack size watermark
+#[cfg(feature = "std")]
+const MAX_ITER_TEST_STACK: usize = 10000;
+#[cfg(not(feature = "std"))]
+const MAX_ITER_TEST_STACK: usize = 100;
+
 #[test]
 fn test_avoid_stack_exhaustion_with_arrays() {
     let mut bytes: Vec<u8> = Vec::new();
     // Create a payload representing Array(Array(Array(Array(...(Array(0))))))
     // If the implementation is not careful, this will exhaust the stack.
-    for _ in 1..10000 {
+    for _ in 1..MAX_ITER_TEST_STACK {
         bytes.push(0b1000_0001);
     }
     bytes.push(0);
@@ -409,7 +424,7 @@ fn test_avoid_stack_exhaustion_with_maps_1() {
     let mut bytes: Vec<u8> = Vec::new();
     // Create a payload representing Map(0: Map(0: Map(0: Map(...Map()))))
     // If the implementation is not careful, this will exhaust the stack.
-    for _ in 1..10000 {
+    for _ in 1..MAX_ITER_TEST_STACK {
         bytes.push(0b1010_0001);
         bytes.push(0);
     }
@@ -422,11 +437,11 @@ fn test_avoid_stack_exhaustion_with_maps_2() {
     let mut bytes: Vec<u8> = Vec::new();
     // Create a payload representing Map(Map(Map(...(Map(): 0): 0): 0): 0)
     // If the implementation is not careful, this will exhaust the stack.
-    for _ in 1..10000 {
+    for _ in 1..MAX_ITER_TEST_STACK {
         bytes.push(0b1010_0001);
     }
     bytes.push(0b1010_0000);
-    for _ in 1..9999 {
+    for _ in 1..MAX_ITER_TEST_STACK-1 {
         bytes.push(0);
     }
     test_decoder_error(bytes, CborError::MalformedInput);
@@ -437,7 +452,7 @@ fn test_avoid_stack_exhaustion_with_tags() {
     let mut bytes: Vec<u8> = Vec::new();
     // Create a payload representing Tag(6: Tag(6: Tag(6: Tag(...Tag(0)))))
     // If the implementation is not careful, this will exhaust the stack.
-    for _ in 1..10000 {
+    for _ in 1..MAX_ITER_TEST_STACK {
         bytes.push(0b1100_0110);
     }
     bytes.push(0);

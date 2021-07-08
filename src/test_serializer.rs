@@ -1,4 +1,8 @@
-use std::{collections::BTreeMap, boxed::Box, string::{String, ToString}, vec::Vec};
+#[cfg(feature = "std")]
+use std::{string::*, boxed::Box, collections::BTreeMap, vec::Vec};
+#[cfg(not(feature = "std"))]
+use ::alloc::{string::*, boxed::Box, collections::BTreeMap, vec::Vec};
+
 use CborType;
 
 #[test]
@@ -231,8 +235,9 @@ fn test_map() {
     assert_eq!(expected, CborType::Map(very_mixed_map).serialize());
 }
 
-#[test]
-#[ignore]
+#[allow(dead_code)] // @@
+// #[test]
+// #[ignore]
 // XXX: The string isn't put into the map at the moment, so we can't actually
 //      test this.
 fn test_invalid_map() {
