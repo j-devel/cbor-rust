@@ -395,11 +395,13 @@ fn test_too_large_input() {
 }
 
 // We currently don't support CBOR strings (issue #39).
+/* @@ Decoder exteneded with `read_string_as_bytes()`
 #[test]
 fn test_invalid_input() {
     let bytes = vec![0x60];
     test_decoder_error(bytes, CborError::UnsupportedType);
 }
+*/
 
 // @@ Adjust `MAX_ITER_TEST_STACK` w.r.t. `MAX_NESTED_DEPTH` and the stack size watermark
 #[cfg(feature = "std")]

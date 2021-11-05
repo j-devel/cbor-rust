@@ -105,6 +105,17 @@ impl<'a> DecoderCursor<'a> {
         Ok(CborType::Bytes(byte_string))
     }
 
+    // @@
+    /// Read a string and return it as bytes.
+    fn read_string_as_bytes(&mut self) -> Result<CborType, CborError> {
+        let length = self.read_int()?;
+        if length > MAX_ARRAY_SIZE as u64 {
+            return Err(CborError::InputTooLarge);
+        }
+        let string = self.read_bytes(length as usize)?;
+        Ok(CborType::Bytes(string))
+    }
+
     /// Read a map.
     fn read_map(&mut self) -> Result<CborType, CborError> {
         let num_items = self.read_int()?;
@@ -152,6 +163,7 @@ impl<'a> DecoderCursor<'a> {
             }
             1 => self.read_negative_int(),
             2 => self.read_byte_string(),
+            3 => self.read_string_as_bytes(), // @@
             4 => self.read_array(),
             5 => self.read_map(),
             6 => {
