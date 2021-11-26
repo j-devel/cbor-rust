@@ -113,7 +113,7 @@ impl<'a> DecoderCursor<'a> {
             return Err(CborError::InputTooLarge);
         }
         let string = self.read_bytes(length as usize)?;
-        Ok(CborType::Bytes(string))
+        Ok(CborType::StringAsBytes(string))
     }
 
     /// Read a map.

@@ -75,6 +75,14 @@ fn encode_string(output: &mut Vec<u8>, tstr: &str) {
     output.extend_from_slice(utf8_bytes);
 }
 
+// @@
+/// The major type is 3. The length of the data is encoded as with positive integers, followed by
+/// the actual data.
+fn encode_string_as_bytes(output: &mut Vec<u8>, bstr: &[u8]) {
+    common_encode_unsigned(output, 3, bstr.len() as u64);
+    output.extend_from_slice(bstr);
+}
+
 /// The major type is 4. The number of items is encoded as with positive integers. Then follows the
 /// encodings of the items themselves.
 fn encode_array(output: &mut Vec<u8>, array: &[CborType]) {
@@ -118,6 +126,7 @@ impl CborType {
             CborType::SignedInteger(ref negative) => encode_negative(&mut bytes, *negative),
             CborType::Bytes(ref bstr) => encode_bytes(&mut bytes, bstr),
             CborType::String(ref tstr) => encode_string(&mut bytes, tstr),
+            CborType::StringAsBytes(ref bstr) => encode_string_as_bytes(&mut bytes, bstr),
             CborType::Array(ref arr) => encode_array(&mut bytes, arr),
             CborType::Map(ref map) => encode_map(&mut bytes, map),
             CborType::Tag(ref t, ref val) => encode_tag(&mut bytes, t, val),

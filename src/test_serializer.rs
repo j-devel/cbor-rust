@@ -110,6 +110,12 @@ fn test_tstr() {
 }
 
 #[test]
+fn test_tstr_as_bytes() { // @@
+    let cbor = CborType::StringAsBytes(vec![0x49, 0x45, 0x54, 0x46]);
+    assert_eq!(vec![0x64, 0x49, 0x45, 0x54, 0x46], cbor.serialize());
+}
+
+#[test]
 fn test_arr() {
     struct Testcase {
         value: Vec<CborType>,

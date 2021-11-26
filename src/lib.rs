@@ -31,6 +31,7 @@ pub enum CborType {
     Tag(u64, Box<CborType>),
     Bytes(Vec<u8>),
     String(String),
+    StringAsBytes(Vec<u8>), // @@
     Array(Vec<CborType>),
     Map(BTreeMap<CborType, CborType>),
     Null,
