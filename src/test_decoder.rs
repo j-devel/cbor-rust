@@ -366,7 +366,8 @@ fn test_null_in_array() {
 #[test]
 fn test_major_type_7() {
     for i in 0..0x20 {
-        if i != 22 {
+        // if i != 22 {
+        if i != 20 && i != 21 && i != 22 && i != 23 { // @@
             let bytes = vec![0xe0 | i];
             test_decoder_error(bytes, CborError::UnsupportedType);
         }

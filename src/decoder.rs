@@ -132,12 +132,25 @@ impl<'a> DecoderCursor<'a> {
         Ok(CborType::Map(map))
     }
 
+    #[allow(dead_code)] // @@
     fn read_null(&mut self) -> Result<CborType, CborError> {
         let value = self.read_uint_from_bytes(1)? & INITIAL_VALUE_MASK;
         if value != 22 {
             return Err(CborError::UnsupportedType);
         }
         Ok(CborType::Null)
+    }
+
+    // @@
+    fn read_special(&mut self) -> Result<CborType, CborError> {
+        let value = self.read_uint_from_bytes(1)? & INITIAL_VALUE_MASK;
+        match value {
+            20 => Ok(CborType::False),
+            21 => Ok(CborType::True),
+            22 => Ok(CborType::Null),
+            23 => Ok(CborType::Undefined),
+            _ => Err(CborError::UnsupportedType),
+        }
     }
 
     /// Peeks at the next byte in the cursor, but does not change the position.
@@ -171,7 +184,8 @@ impl<'a> DecoderCursor<'a> {
                 let item = self.decode_item()?;
                 Ok(CborType::Tag(tag, Box::new(item)))
             }
-            7 => self.read_null(),
+            // 7 => self.read_null(),
+            7 => self.read_special(), // @@
             _ => Err(CborError::UnsupportedType),
         };
         self.depth -= 1;

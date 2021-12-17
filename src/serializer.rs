@@ -130,7 +130,10 @@ impl CborType {
             CborType::Array(ref arr) => encode_array(&mut bytes, arr),
             CborType::Map(ref map) => encode_map(&mut bytes, map),
             CborType::Tag(ref t, ref val) => encode_tag(&mut bytes, t, val),
+            CborType::False => bytes.push(0xf4), // @@
+            CborType::True => bytes.push(0xf5), // @@
             CborType::Null => encode_null(&mut bytes),
+            CborType::Undefined => bytes.push(0xf7), // @@
         };
         bytes
     }

@@ -34,7 +34,10 @@ pub enum CborType {
     StringAsBytes(Vec<u8>), // @@
     Array(Vec<CborType>),
     Map(BTreeMap<CborType, CborType>),
+    False, // @@
+    True, // @@
     Null,
+    Undefined, // @@
 }
 
 #[derive(Debug, PartialEq)]
