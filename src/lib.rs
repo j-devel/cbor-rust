@@ -40,7 +40,7 @@ pub enum CborType {
     Undefined, // @@
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum CborError {
     DuplicateMapKey,
     InputTooLarge,
